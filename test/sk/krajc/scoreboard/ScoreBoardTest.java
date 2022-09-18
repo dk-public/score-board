@@ -18,7 +18,6 @@ class ScoreBoardTest {
         assertEquals("England 1 - Russia 0", scoreBoard.getSummary());
         scoreBoard.finishGame("England", "Russia");
         assertEquals(scoreBoard.NO_GAME_IN_PROGRESS_MESSAGE, scoreBoard.getSummary());
-
     }
 
     @Test
@@ -49,5 +48,21 @@ class ScoreBoardTest {
         Assertions.assertThrows(NoSuchGameInProgressException.class, () -> {
             scoreBoard.updateScore("England", 1, "Russia", 0);
         }, "NoSuchGameInProgressException was expected");
+    }
+
+    @Test
+    void testBasicSummaryOrdering()
+    {
+        ScoreBoardImpl scoreBoard = new ScoreBoardImpl();
+
+        scoreBoard.startGame("England", "Russia");
+        scoreBoard.updateScore("England", 1, "Russia", 0);
+
+        scoreBoard.startGame("Iran", "Ukraine");
+        scoreBoard.updateScore("Iran", 0, "Ukraine", 8);
+
+        assertEquals("Iran 0 - Ukraine 8\n"
+                            + "England 1 - Russia 0", scoreBoard.getSummary());
+
     }
 }
