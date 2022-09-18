@@ -1,6 +1,10 @@
+package sk.krajc.scoreboard;
+
 import java.util.ArrayList;
 
 public class ScoreBoardImpl implements ScoreBoard {
+
+    public static final String NO_GAME_IN_PROGRESS_MESSAGE = "No game in progress";
 
     private ArrayList<ScoreBoardRow> scoreBoardTable;
 
@@ -15,25 +19,13 @@ public class ScoreBoardImpl implements ScoreBoard {
 
     @Override
     public void finishGame(String homeTeamName, String awayTeamName) {
-        for(int i = 0; i < scoreBoardTable.size(); i++){
-            ScoreBoardRow row = scoreBoardTable.get(i);
-            if(row.homeTeamName.equals(homeTeamName) && row.awayTeamName.equals(awayTeamName)){
-                scoreBoardTable.remove(i);
-                return;
-            }
-        }
+        scoreBoardTable.removeIf(x -> x.homeTeamName.equals(homeTeamName) && x.awayTeamName.equals(awayTeamName));
     }
 
     @Override
     public void updateScore(String homeTeamName, int homeTeamScore, String awayTeamName, int awayTeamScore) {
-        for(int i = 0; i < scoreBoardTable.size(); i++){
-            ScoreBoardRow row = scoreBoardTable.get(i);
-            if(row.homeTeamName.equals(homeTeamName) && row.awayTeamName.equals(awayTeamName)){
-                row.homeTeamScore = homeTeamScore;
-                row.awayTeamScore = awayTeamScore;
-                return;
-            }
-        }
+        scoreBoardTable.stream().filter(x -> x.homeTeamName.equals(homeTeamName) && x.awayTeamName.equals(awayTeamName))
+                .findAny().ifPresent(x -> {x.homeTeamScore = homeTeamScore; x.awayTeamScore = awayTeamScore;});
     }
 
     @Override
@@ -44,7 +36,7 @@ public class ScoreBoardImpl implements ScoreBoard {
             summary += row.homeTeamName + " " + row.homeTeamScore + " - " + row.awayTeamName + " " + row.awayTeamScore + (i < scoreBoardTable.size()-1 ? "\n" : "" );
 
         }
-        return "".equals(summary) ? "No game in progress" : summary;
+        return "".equals(summary) ? NO_GAME_IN_PROGRESS_MESSAGE : summary;
     }
 }
 

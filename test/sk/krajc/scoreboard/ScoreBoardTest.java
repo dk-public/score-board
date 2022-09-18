@@ -1,3 +1,5 @@
+package sk.krajc.scoreboard;
+
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -12,7 +14,7 @@ class ScoreBoardTest {
         scoreBoard.updateScore("England", 1, "Russia", 0);
         assertEquals("England 1 - Russia 0", scoreBoard.getSummary());
         scoreBoard.finishGame("England", "Russia");
-        assertEquals("No game in progress", scoreBoard.getSummary());
+        assertEquals(scoreBoard.NO_GAME_IN_PROGRESS_MESSAGE, scoreBoard.getSummary());
 
     }
 }
