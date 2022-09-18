@@ -35,6 +35,15 @@ class ScoreBoardRow {
         return totalScore = homeTeamScore + awayTeamScore;
     }
 
+
+    public int getHomeTeamScore() {
+        return homeTeamScore;
+    }
+
+    public int getAwayTeamScore() {
+        return awayTeamScore;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
