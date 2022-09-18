@@ -58,19 +58,19 @@ public class ScoreBoardImpl implements ScoreBoard {
         }
     }
 
-    private int iterateUpUntilConditionMet(int iter, Field field, int condition){ // passing field because calling methods through reflection would be slow and complicated
-        while(iter >= 0 && (field == Field.START_TIME ? scoreBoardTable.get(iter).getStartTime(): scoreBoardTable.get(iter).getTotalScore()) < condition){
+    private int iterateUpUntilConditionMet(int iter, Field field, int condition, int iterLimit){ // passing field because calling methods through reflection would be slow and complicated
+        while(iter >= iterLimit && (field == Field.START_TIME ? scoreBoardTable.get(iter).getStartTime(): scoreBoardTable.get(iter).getTotalScore()) < condition){
             iter--;
         }
         return iter;
     }
 
-    private int iterateUpUntilTotalScoreBigger(int iter, int score){
-        return iterateUpUntilConditionMet(iter, Field.TOTAL_SCORE, score);
+    private int iterateUpUntilTotalScoreBigger(int iter, int score, int iterLimit){
+        return iterateUpUntilConditionMet(iter, Field.TOTAL_SCORE, score, iterLimit);
     }
 
-    private int iterateUpUntilStartTimeBigger(int iter, int time){
-        return iterateUpUntilConditionMet(iter, Field.START_TIME, time);
+    private int iterateUpUntilStartTimeBigger(int iter, int time, int iterLimit){
+        return iterateUpUntilConditionMet(iter, Field.START_TIME, time, iterLimit);
     }
 
     private void ensureOrdering(String homeTeamName, String awayTeamName) {
@@ -79,10 +79,23 @@ public class ScoreBoardImpl implements ScoreBoard {
         int currentTotalScore = scoreBoardTable.get(currentIndex).updateTotalScore();
         int currentStartTime = scoreBoardTable.get(currentIndex).getStartTime();
         int iter = currentIndex - 1;
-        iter = iterateUpUntilTotalScoreBigger(iter, currentTotalScore);
-        iter = iterateUpUntilStartTimeBigger(iter, currentStartTime);
+        iter = iterateUpUntilTotalScoreBigger(iter, currentTotalScore, 0);
         if(iter != currentIndex - 1){
-            Collections.swap(scoreBoardTable, currentIndex, iter + 1);
+            for(int i = currentIndex; i>iter+1;i--){
+                Collections.swap(scoreBoardTable, i, i-1);
+                currentIndex--;
+            }
+        }
+        int iterLimit = currentIndex;
+        for(; iterLimit > 0 && scoreBoardTable.get(iterLimit).getTotalScore() == scoreBoardTable.get(iterLimit-1).getTotalScore(); iterLimit--){
+        }
+
+        iter = iterateUpUntilStartTimeBigger(iter, currentStartTime, iterLimit >= 0 ? iterLimit : 0);
+        if(iter != currentIndex - 1){
+            for(int i = currentIndex; i>iter+1;i--){
+                Collections.swap(scoreBoardTable, i, i-1);
+                currentIndex--;
+            }
         }
     }
 
@@ -94,6 +107,7 @@ public class ScoreBoardImpl implements ScoreBoard {
             summary += row.homeTeamName + " " + row.homeTeamScore + " - " + row.awayTeamName + " " + row.awayTeamScore + (i < scoreBoardTable.size()-1 ? "\n" : "" );
 
         }
+
         return "".equals(summary) ? NO_GAME_IN_PROGRESS_MESSAGE : summary;
     }
 }
