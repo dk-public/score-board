@@ -1,4 +1,4 @@
 package sk.krajc.scoreboard.exception;
 
-public class GameAlreadyInProgressException extends Exception {
+public class GameAlreadyInProgressException extends RuntimeException {
 }
