@@ -7,17 +7,32 @@ class ScoreBoardRow {
     int homeTeamScore;
     String awayTeamName;
     int awayTeamScore;
+    int startTime;
+    int totalScore;
 
-    public ScoreBoardRow(String homeTeamName, int homeTeamScore, String awayTeamName, int awayTeamScore) {
+    public ScoreBoardRow(String homeTeamName, int homeTeamScore, String awayTeamName, int awayTeamScore, int startTime) {
         this.homeTeamName = homeTeamName;
         this.homeTeamScore = homeTeamScore;
         this.awayTeamName = awayTeamName;
         this.awayTeamScore = awayTeamScore;
+        this.startTime = startTime;
     }
 
     public ScoreBoardRow(String homeTeamName, String awayTeamName) {
         this.homeTeamName = homeTeamName;
         this.awayTeamName = awayTeamName;
+    }
+
+    public int getStartTime() {
+        return startTime;
+    }
+
+    public int getTotalScore() {
+        return totalScore;
+    }
+
+    public int updateTotalScore(){
+        return totalScore = homeTeamScore + awayTeamScore;
     }
 
     @Override
