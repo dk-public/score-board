@@ -65,4 +65,39 @@ class ScoreBoardTest {
                             + "England 1 - Russia 0", scoreBoard.getSummary());
 
     }
+
+    @Test
+    void testSummaryOrderingFromExcercise()
+    {
+        ScoreBoardImpl scoreBoard = new ScoreBoardImpl();
+
+        scoreBoard.startGame("Mexico", "Canada");
+        scoreBoard.updateScore("Mexico", 0, "Canada", 5);
+
+        scoreBoard.startGame("Spain", "Brazil");
+        scoreBoard.updateScore("Spain", 10, "Brazil", 2);
+
+        scoreBoard.startGame("Germany", "France");
+        scoreBoard.updateScore("Germany", 2, "France", 2);
+
+        scoreBoard.startGame("Uruguay", "Italy");
+        scoreBoard.updateScore("Uruguay", 6, "Italy", 6);
+
+        scoreBoard.startGame("Argentina", "Australia");
+        scoreBoard.updateScore("Argentina", 3, "Australia", 1);
+
+
+
+        assertEquals(
+                "Uruguay 6 - Italy 6\n" +
+                        "Spain 10 - Brazil 2\n" +
+                        "Mexico 0 - Canada 5\n" +
+                        "Argentina 3 - Australia 1\n" +
+                        "Germany 2 - France 2", scoreBoard.getSummary());
+
+
+
+
+
+    }
 }
