@@ -6,8 +6,6 @@ import sk.krajc.scoreboard.exception.NoSuchGameInProgressException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Function;
-import java.util.function.IntSupplier;
 
 public class ScoreBoardImpl implements ScoreBoard {
 
@@ -73,6 +71,16 @@ public class ScoreBoardImpl implements ScoreBoard {
         return iterateUpUntilConditionMet(iter, Field.START_TIME, time, iterLimit);
     }
 
+    private int bubbleUp(int iter, int currentIndex){
+        if(iter != currentIndex - 1){
+            for(int i = currentIndex; i>iter+1;i--){
+                Collections.swap(scoreBoardTable, i, i-1);
+                currentIndex--;
+            }
+        }
+        return currentIndex;
+    }
+
     private void ensureOrdering(String homeTeamName, String awayTeamName) {
         //doing sort from jdk library would have poor complexity (n log n or even more for 2 field sorting), so preferring manual maintenance
         int currentIndex = scoreBoardTable.indexOf(new ScoreBoardRow(homeTeamName, awayTeamName));
@@ -80,23 +88,12 @@ public class ScoreBoardImpl implements ScoreBoard {
         int currentStartTime = scoreBoardTable.get(currentIndex).getStartTime();
         int iter = currentIndex - 1;
         iter = iterateUpUntilTotalScoreBigger(iter, currentTotalScore, 0);
-        if(iter != currentIndex - 1){
-            for(int i = currentIndex; i>iter+1;i--){
-                Collections.swap(scoreBoardTable, i, i-1);
-                currentIndex--;
-            }
-        }
+        currentIndex = bubbleUp(iter, currentIndex);
         int iterLimit = currentIndex;
         for(; iterLimit > 0 && scoreBoardTable.get(iterLimit).getTotalScore() == scoreBoardTable.get(iterLimit-1).getTotalScore(); iterLimit--){
         }
-
         iter = iterateUpUntilStartTimeBigger(iter, currentStartTime, iterLimit >= 0 ? iterLimit : 0);
-        if(iter != currentIndex - 1){
-            for(int i = currentIndex; i>iter+1;i--){
-                Collections.swap(scoreBoardTable, i, i-1);
-                currentIndex--;
-            }
-        }
+        currentIndex = bubbleUp(iter, currentIndex);
     }
 
     @Override
@@ -107,7 +104,6 @@ public class ScoreBoardImpl implements ScoreBoard {
             summary += row.homeTeamName + " " + row.homeTeamScore + " - " + row.awayTeamName + " " + row.awayTeamScore + (i < scoreBoardTable.size()-1 ? "\n" : "" );
 
         }
-
         return "".equals(summary) ? NO_GAME_IN_PROGRESS_MESSAGE : summary;
     }
 }
